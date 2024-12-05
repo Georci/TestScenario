@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-alloy = { version = "0.3.0", features = [
+alloy = { version = "0.7.2", features = [
     "full",
     "provider-debug-api",
     "reqwest",
@@ -15,3 +15,12 @@ dotenv = "0.15.0"
 futures-util = "0.3.31"
 rayon = "1.10.0"
 tokio = { version = "1.40.0", features = ["full"] }
+sqlx = { version = "0.8.2", features = [
+    "runtime-async-std",
+    "tls-native-tls",
+    "mysql",
+    "macros",
+    "chrono",
+] }
+rand = "0.8"
+chrono = "0.4"
