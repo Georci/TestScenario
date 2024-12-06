@@ -256,7 +256,7 @@ fn detect(call_trace_vec: Vec<TraceResult>) -> Result<Vec<Address>> {
     for tx_call_trace in call_trace_vec {
         match tx_call_trace {
             TraceResult::Success { result, tx_hash } => {
-                println!("{:?}", tx_hash);
+                // println!("{:?}", tx_hash);
                 let calltrace = result.try_into_call_frame()?;
                 let to = calltrace.from.clone();
                 if is_reentrancy(calltrace) {
@@ -289,7 +289,7 @@ fn _dfs(calltrace: CallFrame, msg_list: &mut HashSet<String>) -> bool {
         "".to_string()
     };
 
-    println!("MSG:{:?}", msg);
+    // println!("MSG:{:?}", msg);
 
     // 构造msg = address | selector
     // 无法插入，说明已经存在调用

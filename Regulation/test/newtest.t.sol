@@ -30,11 +30,113 @@ contract RegulatedTokenTest is Test {
         // 启用白名单功能
         token.enableWhitelist();
 
-        // 分配一些代币给 user1 和 user2
-        token.transfer(user1, 5000 * 1e18);
+        // 分配更多代币给 user1 和 user2，以支持大额转账
+        token.transfer(user1, 15000 * 1e18); // 增加 user1 的初始余额到 20000 * 1e18
         token.transfer(user2, 5000 * 1e18);
 
         vm.stopPrank();
+    }
+
+    /**
+     * @dev 测试转账限额功能的启用和禁用
+     */
+    function testTransferLimits() public {
+        console.log("=== testTransferLimits START ===");
+
+        // 启用转账限额功能
+        vm.startPrank(regulator);
+        console.log("Enabling transfer limits...");
+        token.enableTransferLimits();
+        vm.stopPrank();
+
+        // 设置单笔转账限额为 1000 RGT
+        vm.startPrank(regulator);
+        console.log("Setting maxTxAmount to 1000 * 1e18...");
+        token.updateMaxTxAmount(1000 * 1e18);
+        vm.stopPrank();
+
+        // 设置每日转账限额为 5000 RGT
+        vm.startPrank(regulator);
+        console.log("Setting dailyTxLimit to 5000 * 1e18...");
+        token.updateDailyTxLimit(5000 * 1e18);
+        vm.stopPrank();
+
+        // 输出当前状态
+        console.log("Transfer Limits Enabled:", token.transferLimitsEnabled());
+        console.log("MaxTxAmount:", token.maxTxAmount());
+        console.log("DailyTxLimit:", token.dailyTxLimit());
+
+        // 转账1: 1000 * 1e18 – 应成功
+        vm.startPrank(user1);
+        console.log("Transferring 1000 * 1e18 from user1 to user2...");
+        token.transfer(user2, 1000 * 1e18); // 等于 maxTxAmount
+        console.log("user1 balance:", token.balanceOf(user1));
+        console.log("user2 balance:", token.balanceOf(user2));
+        assertEq(token.balanceOf(user2), 6000 * 1e18);
+        vm.stopPrank();
+
+        // 转账2: 1000 * 1e18 – 应成功
+        vm.startPrank(user1);
+        console.log("Transferring another 1000 * 1e18 from user1 to user2...");
+        token.transfer(user2, 1000 * 1e18);
+        console.log("user1 balance:", token.balanceOf(user1));
+        console.log("user2 balance:", token.balanceOf(user2));
+        assertEq(token.balanceOf(user2), 7000 * 1e18);
+        vm.stopPrank();
+
+        // 转账3: 1000 * 1e18 – 应成功
+        vm.startPrank(user1);
+        console.log("Transferring another 1000 * 1e18 from user1 to user2...");
+        token.transfer(user2, 1000 * 1e18);
+        console.log("user1 balance:", token.balanceOf(user1));
+        console.log("user2 balance:", token.balanceOf(user2));
+        assertEq(token.balanceOf(user2), 8000 * 1e18);
+        vm.stopPrank();
+
+        // 转账4: 1000 * 1e18 – 应成功
+        vm.startPrank(user1);
+        console.log("Transferring another 1000 * 1e18 from user1 to user2...");
+        token.transfer(user2, 1000 * 1e18);
+        console.log("user1 balance:", token.balanceOf(user1));
+        console.log("user2 balance:", token.balanceOf(user2));
+        assertEq(token.balanceOf(user2), 9000 * 1e18);
+        vm.stopPrank();
+
+        // 转账5: 1000 * 1e18 – 应成功，累计转账达到 dailyTxLimit
+        vm.startPrank(user1);
+        console.log("Transferring another 1000 * 1e18 from user1 to user2 (cumulative 5000 * 1e18)...");
+        token.transfer(user2, 1000 * 1e18);
+        console.log("user1 balance:", token.balanceOf(user1));
+        console.log("user2 balance:", token.balanceOf(user2));
+        assertEq(token.balanceOf(user2), 10000 * 1e18);
+        vm.stopPrank();
+
+        // 转账6: 1 * 1e18 – 应失败，累计超过 dailyTxLimit
+        vm.startPrank(user1);
+        console.log("Attempting to transfer 1 * 1e18 from user1 to user2 (should fail due to dailyTxLimit)...");
+        vm.expectRevert("RegulatedToken: Transfer amount exceeds the dailyTxLimit");
+        token.transfer(user2, 1 * 1e18);
+        vm.stopPrank();
+
+        // 禁用转账限额功能
+        vm.startPrank(regulator);
+        console.log("Disabling transfer limits...");
+        token.disableTransferLimits();
+        vm.stopPrank();
+
+        // 输出当前状态
+        console.log("Transfer Limits Enabled after disabling:", token.transferLimitsEnabled());
+
+        // 现在，即使超过限额，转账应成功
+        vm.startPrank(user1);
+        console.log("Transferring 10000 * 1e18 from user1 to user2 after disabling transfer limits...");
+        token.transfer(user2, 10000 * 1e18); // 超过之前的单笔限额
+        console.log("user1 balance after transferring 10000 * 1e18:", token.balanceOf(user1));
+        console.log("user2 balance after transferring 10000 * 1e18:", token.balanceOf(user2));
+        assertEq(token.balanceOf(user2), 10000 * 1e18 + 10000 * 1e18); // 20000 *1e18
+        vm.stopPrank();
+
+        console.log("=== testTransferLimits END ===");
     }
 
     /**
@@ -85,60 +187,10 @@ contract RegulatedTokenTest is Test {
         assertEq(token.balanceOf(user2), 5200 * 1e18);
         vm.stopPrank();
     }
-
-    /**
-     * @dev 测试转账限额功能的启用和禁用
-     */
-    function testTransferLimits() public {
-        // 启用转账限额功能
-        vm.startPrank(regulator);
-        token.enableTransferLimits();
-        vm.stopPrank();
-
-        // 设置单笔转账限额为 1000 RGT
-        vm.startPrank(regulator);
-        token.updateMaxTxAmount(1000 * 1e18);
-        vm.stopPrank();
-
-        // 设置每日转账限额为 5000 RGT
-        vm.startPrank(regulator);
-        token.updateDailyTxLimit(5000 * 1e18);
-        vm.stopPrank();
-
-        // 普通转账不超过限额，应成功
-        vm.startPrank(user1);
-        token.transfer(user2, 1000 * 1e18); // 等于 maxTxAmount
-        assertEq(token.balanceOf(user2), 6000 * 1e18);
-        vm.stopPrank();
-
-        // 超过单笔限额，应失败
-        vm.startPrank(user1);
-        vm.expectRevert("RegulatedToken: Transfer amount exceeds the maxTxAmount");
-        token.transfer(user2, 1001 * 1e18);
-        vm.stopPrank();
-
-        // 累计超过每日限额，应失败
-        vm.startPrank(user1);
-        token.transfer(user2, 4000 * 1e18); // 已转移1000，累计5000
-        vm.expectRevert("RegulatedToken: Transfer amount exceeds the dailyTxLimit");
-        token.transfer(user2, 1 * 1e18); // 超过5000
-        vm.stopPrank();
-
-        // 禁用转账限额功能
-        vm.startPrank(regulator);
-        token.disableTransferLimits();
-        vm.stopPrank();
-
-        // 现在，即使超过限额，转账应成功
-        vm.startPrank(user1);
-        token.transfer(user2, 10000 * 1e18); // 超过之前的单笔限额
-        assertEq(token.balanceOf(user2), 16000 * 1e18);
-        vm.stopPrank();
-    }
-
     /**
      * @dev 测试暂停功能的启用和禁用
      */
+
     function testPause() public {
         // 管理员暂停合约
         vm.startPrank(admin);
@@ -308,6 +360,15 @@ contract RegulatedTokenTest is Test {
         vm.stopPrank();
 
         console.log("-------------------------------------");
+        // 向原黑名单用户转账超过限额的钱
+        uint256 user1Balance = token.balanceOf(user1);
+        console.log("User1 balance before large transfer:", user1Balance);
+        console.log("Transferring 4800 * 1e18 to user2...");
+
+        vm.startPrank(user1);
+        vm.expectRevert("RegulatedToken: Transfer amount exceeds the maxTxAmount");
+        token.transfer(user2, 4800 * 1e18);
+        vm.stopPrank();
 
         // 禁用转账限额功能
         vm.startPrank(regulator);
