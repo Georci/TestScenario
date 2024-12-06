@@ -1,3 +1,4 @@
+use chrono::{DateTime, Duration, Utc};
 use dotenv::dotenv;
 use rand::seq::SliceRandom; // 导入 SliceRandom trait
 use rand::{distributions::Alphanumeric, Rng};
@@ -34,7 +35,7 @@ pub async fn insert_random_blacklist_entries(pool: &Pool<MySql>) -> Result<(), s
         let address = generate_random_address();
         let reason = generate_random_reason();
         let status = "active";
-        let expires_at = None;
+        let expires_at = Some(Utc::now());
         let chain_type = "ETH";
         let created_by = None;
 

@@ -17,7 +17,7 @@ use alloy::{
     transports::http::reqwest::Url,
 };
 use anyhow::{anyhow, Result};
-use chrono::Utc;
+use chrono::{DateTime, Duration, Utc};
 use futures_util::{stream, StreamExt};
 use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
 use std::{collections::HashSet, env, f32::consts::E, str::FromStr, sync::Arc};
@@ -158,7 +158,7 @@ impl BlackListUpdater {
                     let address = address.to_string();
                     let reason = generate_random_reason();
                     let status = "active";
-                    let expires_at = None;
+                    let expires_at = Some(Utc::now());
                     let chain_type = "ETH";
                     let created_by = None;
 
@@ -256,7 +256,7 @@ fn detect(call_trace_vec: Vec<TraceResult>) -> Result<Vec<Address>> {
     for tx_call_trace in call_trace_vec {
         match tx_call_trace {
             TraceResult::Success { result, tx_hash } => {
-                // println!("{:?}", tx_hash);
+                println!("{:?}", tx_hash);
                 let calltrace = result.try_into_call_frame()?;
                 let to = calltrace.from.clone();
                 if is_reentrancy(calltrace) {

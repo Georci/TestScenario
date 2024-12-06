@@ -1,5 +1,6 @@
+use chrono::{DateTime, Duration, Utc};
 use dotenv::dotenv;
-use sqlx::{mysql::MySqlPoolOptions, prelude::FromRow, MySql, Pool};
+use sqlx::{mysql::MySqlPoolOptions, FromRow, MySql, Pool};
 use std::env;
 
 #[derive(Debug, FromRow)]
@@ -7,12 +8,12 @@ pub struct BlacklistEntry {
     id: i64,
     address: String,
     reason: String,
-    added_at: String,
+    added_at: DateTime<Utc>,
     status: String,
-    expires_at: Option<String>,
+    expires_at: Option<DateTime<Utc>>,
     chain_type: String,
     created_by: Option<String>,
-    updated_at: String,
+    updated_at: DateTime<Utc>,
 }
 
 pub async fn create_blacklist_entry(
@@ -20,7 +21,7 @@ pub async fn create_blacklist_entry(
     address: &str,
     reason: &str,
     status: &str,
-    expires_at: Option<&str>,
+    expires_at: Option<DateTime<Utc>>,
     chain_type: &str,
     created_by: Option<&str>,
 ) -> Result<(), sqlx::Error> {
@@ -68,7 +69,7 @@ pub async fn update_blacklist_entry(
     pool: &Pool<MySql>,
     id: i64,
     status: &str,
-    expires_at: Option<&str>,
+    expires_at: Option<DateTime<Utc>>,
 ) -> Result<(), sqlx::Error> {
     let query = r#"
         UPDATE blockchain_blacklist
@@ -114,4 +115,59 @@ pub async fn list_blacklist(pool: &Pool<MySql>) -> Result<Vec<BlacklistEntry>, s
         .await?;
 
     Ok(entries)
+}
+
+// 示例插入函数
+async fn insert_blacklist_entries(pool: &Pool<MySql>, addresses: Vec<String>) {
+    for address in addresses {
+        // 检查数据库中是否已存在该地址
+        if let Ok(exists) = address_exists_in_blacklist(&pool, &address).await {
+            if exists {
+                eprintln!(
+                    "Address {} is already in the blacklist. Skipping insertion.",
+                    address
+                );
+                continue; // 如果存在，则跳过插入
+            }
+        }
+
+        let reason = generate_random_reason();
+        let status = "active";
+        // 计算 expires_at 为当前时间后30天
+        let expires_at = Some(Utc::now() + Duration::days(30));
+        let chain_type = "ETH";
+        let created_by = None;
+
+        let result = create_blacklist_entry(
+            &pool, &address, &reason, status, expires_at, chain_type, created_by,
+        )
+        .await;
+
+        if let Err(err) = result {
+            eprintln!(
+                "Failed to insert blacklist entry for address {}: {}",
+                address, err
+            );
+        }
+    }
+}
+
+// 假设有一个生成随机理由的函数
+fn generate_random_reason() -> String {
+    // 实现您的逻辑
+    "Violation of terms".to_string()
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    dotenv().ok();
+    let database_url = env::var("DATABASE_URL")?;
+    let pool = MySqlPoolOptions::new().connect(&database_url).await?;
+
+    // 示例地址列表
+    let addresses = vec!["0x123...".to_string(), "0x456...".to_string()];
+
+    insert_blacklist_entries(&pool, addresses).await;
+
+    Ok(())
 }
