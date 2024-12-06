@@ -1,0 +1,212 @@
+{
+    "abi": [
+        {
+            "type": "constructor",
+            "inputs": [
+                {
+                    "name": "_etherStoreAddress",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "receive",
+            "stateMutability": "payable"
+        },
+        {
+            "type": "function",
+            "name": "AMOUNT",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "etherStore",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address",
+                    "internalType": "contract EtherStore"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "getBalance",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "sendTx",
+            "inputs": [
+                {
+                    "name": "i",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "outputs": [],
+            "stateMutability": "payable"
+        }
+    ],
+    "bytecode": {
+        "object": "0x6080604052348015600f57600080fd5b50604051610296380380610296833981016040819052602c916050565b600080546001600160a01b0319166001600160a01b0392909216919091179055607e565b600060208284031215606157600080fd5b81516001600160a01b0381168114607757600080fd5b9392505050565b6102098061008d6000396000f3fe6080604052600436106100435760003560e01c806312065fe01461004f5780638bebea9a14610071578063acd2e6e514610086578063d1789176146100be57600080fd5b3661004a57005b600080fd5b34801561005b57600080fd5b50475b6040519081526020015b60405180910390f35b61008461007f3660046101ba565b6100d8565b005b34801561009257600080fd5b506000546100a6906001600160a01b031681565b6040516001600160a01b039091168152602001610068565b3480156100ca57600080fd5b5061005e655af3107a400081565b655af3107a40003410156100eb57600080fd5b60008054906101000a90046001600160a01b03166001600160a01b031663d0e30db0655af3107a40006040518263ffffffff1660e01b81526004016000604051808303818588803b15801561013f57600080fd5b505af1158015610153573d6000803e3d6000fd5b5050600054604051632e1a7d4d60e01b8152600481018690526001600160a01b039091169350632e1a7d4d92506024019050600060405180830381600087803b15801561019f57600080fd5b505af11580156101b3573d6000803e3d6000fd5b5050505050565b6000602082840312156101cc57600080fd5b503591905056fea26469706673582212206f31f9d80789e225556eb8086529bdcf2a5b37a5cde2b22a3bd5b7e9b5c6945964736f6c634300081a0033",
+        "sourceMap": "2714:584:56:-:0;;;2825:100;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;2875:10;:43;;-1:-1:-1;;;;;;2875:43:56;-1:-1:-1;;;;;2875:43:56;;;;;;;;;;2714:584;;14:290:58;84:6;137:2;125:9;116:7;112:23;108:32;105:52;;;153:1;150;143:12;105:52;179:16;;-1:-1:-1;;;;;224:31:58;;214:42;;204:70;;270:1;267;260:12;204:70;293:5;14:290;-1:-1:-1;;;14:290:58:o;:::-;2714:584:56;;;;;;",
+        "linkReferences": {}
+    },
+    "deployedBytecode": {
+        "object": "0x6080604052600436106100435760003560e01c806312065fe01461004f5780638bebea9a14610071578063acd2e6e514610086578063d1789176146100be57600080fd5b3661004a57005b600080fd5b34801561005b57600080fd5b50475b6040519081526020015b60405180910390f35b61008461007f3660046101ba565b6100d8565b005b34801561009257600080fd5b506000546100a6906001600160a01b031681565b6040516001600160a01b039091168152602001610068565b3480156100ca57600080fd5b5061005e655af3107a400081565b655af3107a40003410156100eb57600080fd5b60008054906101000a90046001600160a01b03166001600160a01b031663d0e30db0655af3107a40006040518263ffffffff1660e01b81526004016000604051808303818588803b15801561013f57600080fd5b505af1158015610153573d6000803e3d6000fd5b5050600054604051632e1a7d4d60e01b8152600481018690526001600160a01b039091169350632e1a7d4d92506024019050600060405180830381600087803b15801561019f57600080fd5b505af11580156101b3573d6000803e3d6000fd5b5050505050565b6000602082840312156101cc57600080fd5b503591905056fea26469706673582212206f31f9d80789e225556eb8086529bdcf2a5b37a5cde2b22a3bd5b7e9b5c6945964736f6c634300081a0033",
+        "sourceMap": "2714:584:56:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3199:97;;;;;;;;;;-1:-1:-1;3268:21:56;3199:97;;;160:25:58;;;148:2;133:18;3199:97:56;;;;;;;;2966:166;;;;;;:::i;:::-;;:::i;:::-;;2739:28;;;;;;;;;;-1:-1:-1;2739:28:56;;;;-1:-1:-1;;;;;2739:28:56;;;;;;-1:-1:-1;;;;;565:32:58;;;547:51;;535:2;520:18;2739:28:56;381:223:58;2773:45:56;;;;;;;;;;;;2806:12;2773:45;;2966:166;2806:12;3028:9;:19;;3020:28;;;;;;3058:10;;;;;;;;-1:-1:-1;;;;;3058:10:56;-1:-1:-1;;;;;3058:18:56;;2806:12;3058:35;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;3103:10:56;;:22;;-1:-1:-1;;;3103:22:56;;;;;160:25:58;;;-1:-1:-1;;;;;3103:10:56;;;;-1:-1:-1;3103:19:56;;-1:-1:-1;133:18:58;;;-1:-1:-1;3103:22:56;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2966:166;:::o;196:180:58:-;255:6;308:2;296:9;287:7;283:23;279:32;276:52;;;324:1;321;314:12;276:52;-1:-1:-1;347:23:58;;196:180;-1:-1:-1;196:180:58:o",
+        "linkReferences": {}
+    },
+    "methodIdentifiers": {
+        "AMOUNT()": "d1789176",
+        "etherStore()": "acd2e6e5",
+        "getBalance()": "12065fe0",
+        "sendTx(uint256)": "8bebea9a"
+    },
+    "rawMetadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_etherStoreAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AMOUNT\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"etherStore\",\"outputs\":[{\"internalType\":\"contract EtherStore\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"}],\"name\":\"sendTx\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/vulns/DAO.sol\":\"Normal_tx\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":forge-std/=lib/forge-std/src/\"]},\"sources\":{\"src/interfaces.sol\":{\"keccak256\":\"0xa1fe08fb230c494610ae5cd54a4fcb4f875638ff9abc9271a2b656fa1ed21455\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://18be70a69ecb0b34f38f5671291996e2a9d8c3717e9c5644b56bcf8a26260057\",\"dweb:/ipfs/QmWdfgw8ZjhJNNYX334kcn6CzMMHgQcUjwCP7BP5VbPhZM\"]},\"src/vulns/DAO.sol\":{\"keccak256\":\"0x880abe4d3e822dfc656286fc46b5a0e74e0310ed8ae01041dd62e2777e2340d5\",\"urls\":[\"bzz-raw://a9a6a07653b366c75f98ba883f5395390ef4578d7bd97f6c28778e43f74343ed\",\"dweb:/ipfs/Qmc9pAn4m8W96PVYDUJWfuV8anMFzEzHgppai4mFjuA8M7\"]}},\"version\":1}",
+    "metadata": {
+        "compiler": {
+            "version": "0.8.26+commit.8a97fa7a"
+        },
+        "language": "Solidity",
+        "output": {
+            "abi": [
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "_etherStoreAddress",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "constructor"
+                },
+                {
+                    "inputs": [],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "AMOUNT",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "etherStore",
+                    "outputs": [
+                        {
+                            "internalType": "contract EtherStore",
+                            "name": "",
+                            "type": "address"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "getBalance",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "i",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "payable",
+                    "type": "function",
+                    "name": "sendTx"
+                },
+                {
+                    "inputs": [],
+                    "stateMutability": "payable",
+                    "type": "receive"
+                }
+            ],
+            "devdoc": {
+                "kind": "dev",
+                "methods": {},
+                "version": 1
+            },
+            "userdoc": {
+                "kind": "user",
+                "methods": {},
+                "version": 1
+            }
+        },
+        "settings": {
+            "remappings": [
+                "forge-std/=lib/forge-std/src/"
+            ],
+            "optimizer": {
+                "enabled": true,
+                "runs": 200
+            },
+            "metadata": {
+                "bytecodeHash": "ipfs"
+            },
+            "compilationTarget": {
+                "src/vulns/DAO.sol": "Normal_tx"
+            },
+            "evmVersion": "paris",
+            "libraries": {}
+        },
+        "sources": {
+            "src/interfaces.sol": {
+                "keccak256": "0xa1fe08fb230c494610ae5cd54a4fcb4f875638ff9abc9271a2b656fa1ed21455",
+                "urls": [
+                    "bzz-raw://18be70a69ecb0b34f38f5671291996e2a9d8c3717e9c5644b56bcf8a26260057",
+                    "dweb:/ipfs/QmWdfgw8ZjhJNNYX334kcn6CzMMHgQcUjwCP7BP5VbPhZM"
+                ],
+                "license": "GPL-3.0-or-later"
+            },
+            "src/vulns/DAO.sol": {
+                "keccak256": "0x880abe4d3e822dfc656286fc46b5a0e74e0310ed8ae01041dd62e2777e2340d5",
+                "urls": [
+                    "bzz-raw://a9a6a07653b366c75f98ba883f5395390ef4578d7bd97f6c28778e43f74343ed",
+                    "dweb:/ipfs/Qmc9pAn4m8W96PVYDUJWfuV8anMFzEzHgppai4mFjuA8M7"
+                ],
+                "license": null
+            }
+        },
+        "version": 1
+    },
+    "id": 56
+}
