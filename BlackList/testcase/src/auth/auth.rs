@@ -205,21 +205,21 @@ impl BlackListUpdater {
                         .map(|addr| DynSolValue::Address(addr))
                         .collect::<Vec<_>>(),
                 );
-                let param0 = env::var("PROJECT").unwrap().parse::<Address>().unwrap(); // address project
-                let param1 = DynSolValue::Bool((true)); // bool _isFuctionAccessBlacklist
-                                                        // let param2 = env::var("FUNCSIG").unwrap().parse::<Address>().unwrap(); // bytes4 funcSig
-                let param3 = env::var("BLACKADDR").unwrap().parse::<Address>().unwrap(); // address blackAddr
-                let param4 = DynSolValue::Bool((true)); // bool isblack
-                let param5 = DynSolValue::Bool((true)); // bool useFunctionAccess
+                // let param0 = env::var("PROJECT").unwrap().parse::<Address>().unwrap(); // address project
+                // let param1 = DynSolValue::Bool((true)); // bool _isFuctionAccessBlacklist
+                //                                         // let param2 = env::var("FUNCSIG").unwrap().parse::<Address>().unwrap(); // bytes4 funcSig
+                // let param3 = env::var("BLACKADDR").unwrap().parse::<Address>().unwrap(); // address blackAddr
+                // let param4 = DynSolValue::Bool((true)); // bool isblack
+                // let param5 = DynSolValue::Bool((true)); // bool useFunctionAccess
 
-                let tokens = DynSolValue::Tuple(vec![
-                    DynSolValue::Address(param0),
-                    param1,
-                    DynSolValue::Bytes(vec![0x1, 0x2, 0x3, 0x4]),
-                    DynSolValue::Address(param3),
-                    param4,
-                    param5,
-                ]);
+                // let tokens = DynSolValue::Tuple(vec![
+                //     DynSolValue::Address(param0),
+                //     param1,
+                //     DynSolValue::Bytes(vec![0x1, 0x2, 0x3, 0x4]),
+                //     DynSolValue::Address(param3),
+                //     param4,
+                //     param5,
+                // ]);
                 let param = tokens.abi_encode();
                 let call_data = implement
                     .updataModuleInfo(
@@ -237,7 +237,7 @@ impl BlackListUpdater {
                     .with_gas_limit(10000000)
                     .with_max_fee_per_gas(0)
                     .with_max_priority_fee_per_gas(0);
-                println!("等待发送交易{:?}", tx);
+                println!("等待发送交易");
                 let pending_tx = self_clone_send.provider.send_transaction(tx).await.unwrap();
                 let mut locked = self_clone_send.black_list.lock().await;
 
@@ -258,9 +258,9 @@ fn detect(call_trace_vec: Vec<TraceResult>) -> Result<Vec<Address>> {
             TraceResult::Success { result, tx_hash } => {
                 println!("{:?}", tx_hash);
                 let calltrace = result.try_into_call_frame()?;
-                let to = calltrace.to.clone();
-                if to.is_some() && is_reentrancy(calltrace) {
-                    black_list.push(to.unwrap());
+                let to = calltrace.from.clone();
+                if is_reentrancy(calltrace) {
+                    black_list.push(to);
                 }
             }
             _ => {}
@@ -277,12 +277,21 @@ fn is_reentrancy(calltrace: CallFrame) -> bool {
 
 fn _dfs(calltrace: CallFrame, msg_list: &mut HashSet<String>) -> bool {
     // 初步过滤
-    if calltrace.input.len() < 8 || calltrace.typ.eq("STATICCALL") || calltrace.to.is_none() {
+    if calltrace.typ.eq("STATICCALL") || calltrace.to.is_none() {
         return false;
     }
 
+    let msg = if calltrace.input.len() >= 10 {
+        calltrace.to.unwrap().to_string() + "|" + calltrace.input.to_string().split_at(10).0
+    } else if calltrace.input.len() == 0 {
+        calltrace.to.unwrap().to_string() + "|fallback"
+    } else {
+        "".to_string()
+    };
+
+    println!("MSG:{:?}", msg);
+
     // 构造msg = address | selector
-    let msg = calltrace.to.unwrap().to_string() + "|" + calltrace.input.to_string().split_at(10).0;
     // 无法插入，说明已经存在调用
     if !msg_list.insert(msg) {
         return true;
