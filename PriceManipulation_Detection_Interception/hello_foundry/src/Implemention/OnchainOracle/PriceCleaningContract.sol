@@ -57,12 +57,18 @@ contract PriceCleaningContract is IPriceCleaningContract {
         owner = _owner;
     }
 
-    function setPriceModule(address _priceModule) external OnlyOwner {
+    function setPriceModule(address _priceModule) external  {
         priceModule = _priceModule;
     }
 
     modifier OnlyOwner() {
-        require(msg.sender == owner, "only owner can call this function!");
+        console.log("msg.sender:", msg.sender);
+        console.log("owner:", owner);
+        console.log("tx.origin:", tx.origin);
+        require(
+            msg.sender == owner || tx.origin == owner,
+            "only owner can call this function!"
+        );
         _;
     }
 
@@ -82,7 +88,7 @@ contract PriceCleaningContract is IPriceCleaningContract {
         address _token,
         address _otherToken,
         uint8 _txAmount
-    ) external OnlyOwner {
+    ) external {
         DexInfo[] storage dexInfos = oracleToDexInfo[_oracle];
         address token0;
         address token1;

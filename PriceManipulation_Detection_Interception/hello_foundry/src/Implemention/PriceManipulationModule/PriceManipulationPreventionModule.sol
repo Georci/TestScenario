@@ -13,6 +13,7 @@ contract PriceManipulationPrevention {
     using FixidityLib for *;
 
     uint8 public constant DECIMALS = 24;
+    bool public enableInterception;
 
     address owner;
 
@@ -58,6 +59,7 @@ contract PriceManipulationPrevention {
     // Ken: we don't set price here, because the price must be set when it be use.
     function setInfo(bytes calldata data) external {
         (
+            bool _enableInterception,
             address project,
             bytes4 func_selector,
             uint8 dexIndex,
@@ -71,6 +73,7 @@ contract PriceManipulationPrevention {
         ) = abi.decode(
                 data,
                 (
+                    bool,
                     address,
                     bytes4,
                     uint8,
@@ -109,6 +112,7 @@ contract PriceManipulationPrevention {
         dexInfoArray[dexIndex].deviationThreshold = _deviationThreshold;
 
         isEnableProtection[project][func_selector] = true;
+        enableInterception = _enableInterception;
     }
 
     /**
@@ -264,6 +268,8 @@ contract PriceManipulationPrevention {
         } else {
             price = int256(priceUint);
         }
+        console.log("project:", project);
+        console.log("price:", price);
         return price;
     }
 
@@ -373,10 +379,21 @@ contract PriceManipulationPrevention {
                 dexInfos[i].deviationThreshold
             );
 
-            if (priceDifference > dexInfos[i].deviationThreshold) {
+            if (
+                priceDifference > dexInfos[i].deviationThreshold &&
+                enableInterception == true
+            ) {
                 revert("The transaction used a wrong price");
+            } else if (
+                priceDifference > dexInfos[i].deviationThreshold &&
+                enableInterception == false
+            ) {
+                console.log(
+                    "Be carefull! Your current settlement price is unreasonable"
+                );
+            } else {
+                console.log("Your current settlement price is reasonable");
             }
-            console.log("Your current settlement price is reasonable");
         }
         return true;
     }

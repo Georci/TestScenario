@@ -167,7 +167,6 @@ async function setBlacklist_onchain(firewall_contract, signer) {
     }
 }
 
-
 async function initial_blacklist_balance(signer) {
     // 遍历地址列表，逐个转账
     for (let i = 0; i < BLACKLIST_ADDRESSES.length; i++) {
@@ -195,7 +194,7 @@ async function transferToRandomAccounts(signer) {
             console.log(`Transferring 0.01 ETH to ${recipient}...`);
             const tx = await signer.sendTransaction({
                 to: recipient,
-                value: ethers.parseEther("0.1"),
+                value: ethers.parseEther("0.01"),
             });
             await tx.wait();
             console.log(`Transaction to ${recipient} completed!`);
@@ -217,6 +216,8 @@ async function main() {
     const normal_contract = new ethers.Contract(normal_ADDRESS, normal_ABI, signer);
     const firewall_contract = new ethers.Contract(firewall_address, firewall_ABI, signer);
 
+    // setBlacklist_onchain(firewall_contract, signer)
+
     // 初始化测试账户资金
     // await initial_blacklist_balance(signer);
     // await transferToRandomAccounts(signer);
@@ -228,7 +229,7 @@ async function main() {
     // 执行交易
     await executeReentrancyAttacks(provider, attack_contract);
     await executeBlacklistTransactions(provider, normal_contract);
-    await executeNormalTransactions(provider, normal_contract);
+    // await executeNormalTransactions(provider, normal_contract);
 
     // 打印统计信息
     console.log("=== Transaction Summary ===");
@@ -239,15 +240,30 @@ async function main() {
     for (let i = 0; i < attackTransactionTimes.length; i++) {
         console.log(`${i + 1}: ${attackTransactionTimes[i]} ms`);
     }
+    // 打印 attackTransactionTimes 的平均值
+    const attackAverage = calculateAverage(attackTransactionTimes);
+    console.log(`Attack transaction average time: ${attackAverage.toFixed(2)} ms`);
 
     // 打印 normalTransactionTimes 数组的每个值
     console.log("Normal transaction times:");
     for (let i = 0; i < normalTransactionTimes.length; i++) {
         console.log(`${i + 1}: ${normalTransactionTimes[i]} ms`);
     }
+    // 打印 normalTransactionTimes 的平均值
+    const normalAverage = calculateAverage(normalTransactionTimes);
+    console.log(`Normal transaction average time: ${normalAverage.toFixed(2)} ms`);
 }
 
+main().catch((error) => {
+    console.error("Error:", error);
+});
 
+
+// 计算数组的平均值
+function calculateAverage(timesArray) {
+    const total = timesArray.reduce((acc, time) => acc + time, 0);
+    return total / timesArray.length;
+}
 
 // 执行 50 次重入攻击
 // 正常账户执行五次参数不同的重入攻击，一共十个账户
@@ -276,6 +292,8 @@ async function executeReentrancyAttacks(provider, attackContract) {
                 );
             } catch (error) {
                 attackFailureCount++; // 记录失败数
+                const endTime = Date.now(); // 记录结束时间，即便失败
+                attackTransactionTimes.push(endTime - startTime); // 记录失败的时间
                 console.error(
                     `Attack ${counter} failed by ${wallet.address}:`,
                     error
@@ -314,6 +332,8 @@ async function executeBlacklistTransactions(provider, normalContract) {
             );
         } catch (error) {
             attackFailureCount++; // 记录失败数
+            const endTime = Date.now(); // 记录结束时间，即便失败
+            attackTransactionTimes.push(endTime - startTime); // 记录失败的时间
             console.error(
                 `Transaction failed for blacklisted wallet ${wallet.address}:`,
                 error
@@ -388,6 +408,3 @@ async function test(provider, contract) {
 
 }
 
-main().catch((error) => {
-    console.error("Error:", error);
-});

@@ -96,7 +96,7 @@ contract Attack {
 }
 
 // 模拟正常交易
-contract Normal_tx {
+contract Normal {
     EtherStore public etherStore;
     uint256 public constant AMOUNT = 0.0001 ether;
 
